@@ -82,3 +82,15 @@
           (map #(when (= 0 (mod % 2))
                   %)
                (range 1000))))
+
+;; Non lazy. As this shows, it was 'remove' which was responsible for dropping a 'nil'
+;; value and getting the next non nil value. So take would ask fro the first 10, but it was
+;; remove which would produce the 10 non nil values. INGENIOUS!!
+(defn non-lazy-map-by-2
+  []
+  (mapv #(if (nil? %)
+           []
+           %)
+        (map #(when (= 0 (mod % 2))
+                %)
+             (range 1000))))
