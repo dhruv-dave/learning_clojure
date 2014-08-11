@@ -37,3 +37,48 @@
 ;; Difference between 'rest' and 'next' is 'next' returns 'nil' if no items after the first value; 'rest' returns and empty seq.
 (doc next)
 (doc rest)
+
+;; Functions which work with sequences call 'seq' implicitly.
+(def astring "Hello World")
+(map str astring)
+;; Still seq-able
+(map str (set astring))  ;; -> Proves 'set' implicitly uses 'seq'
+;; Still works
+(map str (into [] astring))
+;; And still does
+(map str (seq astring))
+
+
+;; Creating lazy-sequences.
+;; Create a lazy-sequence with an upper bound limit of 'limit'
+(defn lazy-limit
+  [limit]
+  (lazy-seq (cons (rand-int limit)
+                  (lazy-limit limit))))
+
+;; "For example, give me a list of first 20 numbers divisible by 2. (take 20 fn)"
+;; lazy-seq is not needed since (range) is lazy. Figured it out after.
+;; For the sake of using lazy-seq, I am going to assume that no one is going to
+;; ask for 1,000,000 numbers divisible by 2
+(defn nums-by-2
+  []
+  (lazy-seq (remove nil?
+                    (for [k (range 1000000)]
+                      (when (= 0 (mod k 2))
+                        k)))))
+
+;; Since we know range is lazy
+(defn by-2
+  []
+  (remove nil?
+          (map #(when (= 0 (mod % 2))
+                  %)
+               (range))))
+
+;; Since we know map is lazy
+(defn map-by-2
+  []
+  (remove nil?
+          (map #(when (= 0 (mod % 2))
+                  %)
+               (range 1000))))
