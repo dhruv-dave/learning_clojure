@@ -133,7 +133,7 @@
    {:title "Zen Rodeo", :artist "Papas Fritas", :year 2003}])
 
 (defn grouped
-  "Working with 'group-by.
+  "Working with 'group-by. /
   EX: (grouped playlist :artist :year)."
   ([coll key1]
      (group-by key1 coll))
