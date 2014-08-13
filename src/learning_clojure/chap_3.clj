@@ -104,20 +104,21 @@
 
 
 (defn euclidian-division
-  [coll]
   "Collection is a collection of numbers.
-   Steps taken to solve:
-   Convert it to a collection of tuples. Then use 'juxt' to get the
-   quotient and remainder"
+  Steps taken to solve:
+  Convert it to a collection of tuples. Then use 'juxt' to get the
+  quotient and remainder"
+  [coll]
   (let [tuples (partition 2 coll)]
     (map #(apply (juxt quot rem) %) tuples)))
 
+;; Using destructing in the map function.
 (defn euclidian-division
-  [coll]
   "Collection is a collection of numbers.
-   Steps taken to solve:
-   Convert it to a collection of tuples. Then use 'juxt' to get the
-   quotient and remainder"
+  Steps taken to solve:
+  Convert it to a collection of tuples. Then use 'juxt' to get the
+  quotient and remainder"
+  [coll]
   (let [tuples (partition 2 coll)]
     (map (fn [[a b]]
            ((juxt quot rem) a b))
@@ -132,7 +133,8 @@
    {:title "Zen Rodeo", :artist "Papas Fritas", :year 2003}])
 
 (defn grouped
-  "EX: (grouped playlist :artist :year)"
+  "Working with 'group-by.
+  EX: (grouped playlist :artist :year)."
   ([coll key1]
      (group-by key1 coll))
   ([coll key1 key2]
