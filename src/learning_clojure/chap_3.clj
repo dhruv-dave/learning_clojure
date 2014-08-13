@@ -81,4 +81,61 @@
   (remove nil?
           (map #(when (= 0 (mod % 2))
                   %)
-               (range 1000))))
+               (range))))
+
+;; Non lazy. As this shows, it was 'remove' which was responsible for dropping a 'nil'
+;; value and getting the next non nil value. So take would ask fro the first 10, but it was
+;; remove which would produce the 10 non nil values. INGENIOUS!!
+(defn non-lazy-map-by-2
+  []
+  (mapv #(if (nil? %)
+           []
+           %)
+        (map #(when (= 0 (mod % 2))
+                %)
+             (range 1000))))
+
+;; Difference between 'next' and 'rest' is 'next' forces realization of the sequence.
+;; The following example should cause a out-of-memory exception.
+(comment
+  (try (next (map-by-2))
+       (catch Throwable t#
+         (println "Got expected exception:" (.getMessage t#)))))
+
+
+(defn euclidian-division
+  "Collection is a collection of numbers.
+  Steps taken to solve:
+  Convert it to a collection of tuples. Then use 'juxt' to get the
+  quotient and remainder"
+  [coll]
+  (let [tuples (partition 2 coll)]
+    (map #(apply (juxt quot rem) %) tuples)))
+
+;; Using destructing in the map function.
+(defn euclidian-division
+  "Collection is a collection of numbers.
+  Steps taken to solve:
+  Convert it to a collection of tuples. Then use 'juxt' to get the
+  quotient and remainder"
+  [coll]
+  (let [tuples (partition 2 coll)]
+    (map (fn [[a b]]
+           ((juxt quot rem) a b))
+         tuples)))
+
+(def playlist
+  [{:title "Elephant", :artist "The White Stripes", :year 2003}
+   {:title "Helioself", :artist "Papas Fritas", :year 1999}
+   {:title "FUCK YOU!", :artist "Papas Fritas", :year 1999}
+   {:title "Stories from the City, Stories from the Sea", :artist "PJ Harvey", :year 2000}
+   {:title "Buildings and Grounds", :artist "Papas Fritas", :year 2003}
+   {:title "Zen Rodeo", :artist "Papas Fritas", :year 2003}])
+
+(defn grouped
+  "Working with 'group-by.
+  EX: (grouped playlist :artist :year)."
+  ([coll key1]
+     (group-by key1 coll))
+  ([coll key1 key2]
+     (group-by (juxt key1 key2) coll)))
